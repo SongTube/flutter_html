@@ -85,24 +85,6 @@ void testNewParser(BuildContext context) {
     null,
   );
 
-  ReplacedElement audioContentElement = parseReplacedElement(
-    HtmlParser.parseHTML("""
-      <audio controls>
-        <source src='audio.mp3' type='audio/mpeg'>
-        <source src='audio.wav' type='audio/wav'>
-        Your browser does not support the audio tag.
-      </audio>
-    """).getElementsByTagName("audio")[0],
-    null,
-  );
-  expect(audioContentElement, isA<AudioContentElement>());
-  if (audioContentElement is AudioContentElement) {
-    expect(audioContentElement.showControls, equals(true),
-        reason: "Controls isn't working");
-    expect(audioContentElement.src, hasLength(2),
-        reason: "Not enough sources...");
-  }
-
   Style style1 = Style(
     display: Display.BLOCK,
     fontWeight: FontWeight.bold,

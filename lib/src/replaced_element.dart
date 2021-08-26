@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:chewie_audio/chewie_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/html_parser.dart';
@@ -14,7 +13,6 @@ import 'package:flutter_html/style.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:html/dom.dart' as dom;
-import 'package:video_player/video_player.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /// A [ReplacedElement] is a type of [StyledElement] that does not require its [children] to be rendered.
@@ -101,47 +99,6 @@ class ImageContentElement extends ReplacedElement {
     return SizedBox(width: 0, height: 0);
   }
 }
-
-/// [AudioContentElement] is a [ContentElement] with an audio file as its content.
-class AudioContentElement extends ReplacedElement {
-  final List<String?> src;
-  final bool showControls;
-  final bool autoplay;
-  final bool loop;
-  final bool muted;
-
-  AudioContentElement({
-    required String name,
-    required this.src,
-    required this.showControls,
-    required this.autoplay,
-    required this.loop,
-    required this.muted,
-    required dom.Element node,
-  }) : super(name: name, style: Style(), node: node, elementId: node.id);
-
-  @override
-  Widget toWidget(RenderContext context) {
-    return Container(
-      key: AnchorKey.of(context.parser.key, this),
-      width: context.style.width ?? 300,
-      height: Theme.of(context.buildContext).platform == TargetPlatform.android
-          ? 48 : 75,
-      child: ChewieAudio(
-        controller: ChewieAudioController(
-          videoPlayerController: VideoPlayerController.network(
-            src.first ?? "",
-          ),
-          autoPlay: autoplay,
-          looping: loop,
-          showControls: showControls,
-          autoInitialize: true,
-        ),
-      ),
-    );
-  }
-}
-
 
 /// [SvgContentElement] is a [ReplacedElement] with an SVG as its contents.
 class SvgContentElement extends ReplacedElement {
@@ -312,23 +269,6 @@ ReplacedElement parseReplacedElement(
   NavigationDelegate? navigationDelegateForIframe,
 ) {
   switch (element.localName) {
-    case "audio":
-      final sources = <String?>[
-        if (element.attributes['src'] != null) element.attributes['src'],
-        ...ReplacedElement.parseMediaSources(element.children),
-      ];
-      if (sources.isEmpty || sources.first == null) {
-        return EmptyContentElement();
-      }
-      return AudioContentElement(
-        name: "audio",
-        src: sources,
-        showControls: element.attributes['controls'] != null,
-        loop: element.attributes['loop'] != null,
-        autoplay: element.attributes['autoplay'] != null,
-        muted: element.attributes['muted'] != null,
-        node: element,
-      );
     case "br":
       return TextContentElement(
         text: "\n",
