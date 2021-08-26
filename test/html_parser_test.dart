@@ -85,14 +85,6 @@ void testNewParser(BuildContext context) {
     null,
   );
 
-  expect(videoContentElement, isA<VideoContentElement>());
-  if (videoContentElement is VideoContentElement) {
-    expect(videoContentElement.showControls, equals(true),
-        reason: "Controls isn't working");
-    expect(videoContentElement.src, hasLength(2),
-        reason: "Not enough sources...");
-  }
-
   ReplacedElement audioContentElement = parseReplacedElement(
     HtmlParser.parseHTML("""
       <audio controls>
